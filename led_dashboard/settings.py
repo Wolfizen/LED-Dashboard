@@ -105,3 +105,8 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 
 STATIC_URL = '/static/'
+
+
+# User application settings
+
+RGBD_CONFIG_DIR = os.path.join(os.environ.get('HOME'), '.config/rgbd/')
