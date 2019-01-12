@@ -9,6 +9,6 @@ class StripControlForm(forms.Form):
 class ProfileSelectForm(forms.Form):
 	profile = forms.CharField(label="Profile", widget=forms.HiddenInput())
 
-	def __init__(self, profile_path):
-		super(ProfileSelectForm, self).__init__()
-		self.profile.initial = profile_path
+	def __init__(self, profile_name=None, **kwargs):
+		super(ProfileSelectForm, self).__init__(**kwargs)
+		self.fields['profile'].initial = profile_name

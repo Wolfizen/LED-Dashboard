@@ -34,10 +34,11 @@
 
 		<h2>Profile Select</h2>
 		{% for profile in strip_profiles %}
-		<form action="{% url 'main:set-profile' %}">
+		<form action="{% url 'main:set-profile' %}" method="POST">
 			<p>
+				<b>{{ profile.name }}</b>
 				{{ profile.form.profile }}
-				<input type="submit" value="Set Profile">
+				<input type="submit" value="Switch To">
 			</p>
 		</form>
 		{% empty %}
