@@ -24,7 +24,7 @@ SECRET_KEY = 'bic@058q(l6ff!9@*lwvbmolw9dw8f5+qp7pq$vv&ezxmisy1w'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 # Application definition
 
