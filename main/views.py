@@ -33,7 +33,10 @@ class StripControlFormSubmit(View):
 	def post(self, request):
 		form = StripControlForm(request.POST)
 		if form.is_valid():
-			# TODO!
+			brightness = form.cleaned_data['brightness']
+			if not form.cleaned_data['power']:
+				brightness = 0
+			rgbd.set_brightness(brightness)
 			print("Strip control submit: {}".format(request.POST))
 			return HttpResponseRedirect(reverse('main:root'))
 		else:
@@ -45,7 +48,8 @@ class ProfileSelectFormSubmit(View):
 	def post(self, request):
 		form = ProfileSelectForm(data=request.POST)
 		if form.is_valid():
-			# TODO!
+			profile = rgbd.lookup_profile(form.cleaned_data['profile'])
+			rgbd.switch_to_profile(profile)
 			print("Profile select submit: {}".format(request.POST))
 			return HttpResponseRedirect(reverse('main:root'))
 		else:

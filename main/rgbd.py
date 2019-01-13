@@ -12,6 +12,13 @@ class Profile(object):
 		self.name = name
 		self.path = os.path.join(settings.RGBD_CONFIG_DIR, name + '.json')
 
+	def validate(self):
+		if os.path.exists(self.path):
+			with open(self.path) as fp:
+				json.load(fp)  # Verify the JSON file is valid
+		else:
+			raise ValueError("Profile '{}' does not exist".format(self.name))
+
 
 def find_profiles():
 	strip_profiles = []
@@ -30,9 +37,19 @@ def find_profiles():
 
 def lookup_profile(name):
 	profile = Profile(name)
-	if os.path.exists(profile.path):
-		with open(profile.path) as fp:
-			json.load(fp)  # Verify the JSON file is valid
-		return profile
+	profile.validate()
+	return profile
+
+
+def set_brightness(value):
+	if 0 <= value <= 255 and isinstance(value, int):
+		# TODO: switch to DBUS
+		os.system('/home/rgb_user/.local/bin/lightctl set-brightness {}'.format(value))
 	else:
-		raise ValueError("Profile '{}' does not exist".format(name))
+		raise ValueError("Bad range")
+
+
+def switch_to_profile(profile):
+	# TODO: switch to DBUS
+	profile.validate()
+	os.system('/home/rgb_user/.local/bin/lightctl load-conf {}'.format(profile.path))
