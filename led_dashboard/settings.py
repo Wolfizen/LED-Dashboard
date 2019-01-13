@@ -109,5 +109,5 @@ STATIC_URL = '/static/'
 
 # User application settings
 
-RGBD_CONFIG_DIR = os.path.join(os.environ.get('HOME'), '.config/rgbd/')
+RGBD_CONFIG_DIR = os.path.join(BASE_DIR, 'main/test/rgbd-config/')
 RGBD_EXCLUDE_PROFILES = ['default', 'config', 'template']

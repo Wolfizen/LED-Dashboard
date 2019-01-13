@@ -1,0 +1,32 @@
+{
+        "daemon": {
+                "stdout": "/tmp/rgbd.stdout",
+                "stdout_mode": "w",
+                "stderr": "/tmp/rgbd.stderr",
+                "stderr_mode": "ab",
+                "blank_on_exit": true
+        },
+        "strip_config": {
+                "count":        220,
+                "pin":          10,
+                "freq":         800000,
+                "DMA":          10,
+                "brightness":   128,
+                "invert":       false,
+                "channel":      0,
+                "strip":        "ws281x"
+        },
+        "animations_path": "~/.local/share/rgbd/animations",
+        "zones": [
+                {
+                        "name":         "default",
+                        "length":       220,
+                        "animation":    "rainbow",
+                        "animation_config": {
+                                "fade_as_whole": false,
+                                "steps":        150
+                        },
+                        "step_delay":   40
+                }
+        ]
+}
