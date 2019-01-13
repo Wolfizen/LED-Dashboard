@@ -24,9 +24,9 @@ def find_profiles():
 	strip_profiles = []
 	if os.path.exists(settings.RGBD_CONFIG_DIR):
 		for fname in sorted(os.listdir(settings.RGBD_CONFIG_DIR)):
-			if fname.endswith('.json') and fname.rstrip('.json') not in settings.RGBD_EXCLUDE_PROFILES:
+			if fname.endswith('.json') and fname[:-len('.json')] not in settings.RGBD_EXCLUDE_PROFILES:
 				try:
-					profile = lookup_profile(fname.rstrip('.json'))
+					profile = lookup_profile(fname[:-len('.json')])
 					strip_profiles.append(profile)
 				except ValueError:
 					continue
