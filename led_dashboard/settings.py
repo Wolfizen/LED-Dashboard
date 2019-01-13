@@ -15,15 +15,6 @@ import os
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/2.1/howto/deployment/checklist/
-
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'bic@058q(l6ff!9@*lwvbmolw9dw8f5+qp7pq$vv&ezxmisy1w'
-
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-
 ALLOWED_HOSTS = ['*']
 
 # Application definition
@@ -109,5 +100,5 @@ STATIC_URL = '/static/'
 
 # User application settings
 
-RGBD_CONFIG_DIR = os.path.join(BASE_DIR, 'main/test/rgbd-config/')
+RGBD_CONFIG_DIR = os.path.join(os.environ.get('HOME'), '.config/rgbd/')
 RGBD_EXCLUDE_PROFILES = ['default', 'config', 'template']
