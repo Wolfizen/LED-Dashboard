@@ -3,7 +3,7 @@ from django import forms
 
 class StripControlForm(forms.Form):
 	power = forms.BooleanField(label="Power", initial=True, required=False)
-	brightness = forms.IntegerField(label="Brightness", initial=255)
+	brightness = forms.IntegerField(label="Brightness", initial=128)
 
 
 class ProfileSelectForm(forms.Form):
