@@ -1,50 +1,67 @@
-<!DOCTYPE html>
+{% extends 'main/base.html' %}
+{% block content %}
 
-<html>
-	<head>
-		<title>Lights Dashboard</title>
-	</head>
-	<body>
-		<h1>Lights Dashboard</h1>
+<div class="container">
 
-		<h2>Strip Control</h2>
-		<form action="{% url 'main:strip-control' %}" method="POST">
-			{{ control_form.non_field_errors }}
+	<h1>Lights Dashboard</h1>
+	<hr>
 
-			<p>
-				{{ control_form.power.errors }}
-				<label for="power_on">{{ control_form.power.label }}: </label>
-				<input type="radio" name="power" id="power_on"
-				       {% if control_form.power.value %} checked {% endif %} value="true"> On &nbsp;
-				<input type="radio" name="power" id="power_off"
-				       {% if not control_form.power.value %} checked {% endif %} value="false"> Off
-			</p>
+	<h2>Strip Control</h2>
+	<form action="{% url 'main:strip-control' %}" method="POST">
+		{{ control_form.non_field_errors }}
 
-			<p>
-				{{ control_form.power.errors }}
-				<label for="brightness_slide">{{ control_form.brightness.label }}: </label>
-				<input type="range" name="brightness" id="brightness_slide" onchange="brightness_num.value=value"
-				       min="0" max="255" value="{{ control_form.brightness.value }}">
-				<input type="number" id="brightness_num" onchange="brightness_slide.value=value"
-				       min="0" max="255" value="{{ control_form.brightness.value }}">
-			</p>
+		<fieldset class="form-group">
+			{{ control_form.power.errors }}
+			<legend>{{ control_form.power.label }}</legend>
+			<div class="btn-group btn-group-toggle btn-block" data-toggle="buttons">
+				<label class="btn btn-outline-success {% if control_form.power.value %} active {% endif %}">
+					<input type="radio" name="power" id="power_on" value="true"
+					       {% if control_form.power.value %} checked {% endif %}> On
+				</label>
+				<label class="btn btn-outline-danger {% if not control_form.power.value %} active {% endif %}">
+					<input type="radio" name="power" id="power_off" value="false"
+					       {% if not control_form.power.value %} checked {% endif %}> Off
+				</label>
+			</div>
+		</fieldset>
 
-			<input type="submit" value="Update Strip">
-		</form>
+		<fieldset class="form-group">
+			{{ control_form.power.errors }}
+			<legend>{{ control_form.brightness.label }}</legend>
+			<div class="form-row align-items-center">
+				<div class="col-9">
+					<input type="range" name="brightness" id="brightness_slide" class="form-control-range"
+					       min="0" max="255" value="{{ control_form.brightness.value }}"
+					       onchange="brightness_num.value=value">
+				</div>
+				<div class="col-3">
+					<input type="number" id="brightness_num" class="form-control"
+					       min="0" max="255" value="{{ control_form.brightness.value }}"
+					       onchange="brightness_slide.value=value">
+				</div>
+			</div>
+		</fieldset>
 
-		<h2>Profile Select</h2>
-		{% for profile in strip_profiles %}
-		<form action="{% url 'main:set-profile' %}" method="POST">
-			<p>
-				<b>{{ profile.name }}</b>
-				{{ profile.form.profile }}
-				<input type="submit" value="Switch To">
-			</p>
-		</form>
-		{% empty %}
+		<button type="submit" class="btn btn-primary">Update Strip</button>
+	</form>
+
+	<hr>
+
+	<h2>Profile Select</h2>
+	{% for profile in strip_profiles %}
+	<form action="{% url 'main:set-profile' %}" method="POST">
 		<p>
-			No profiles available :( <br>This is probably an error. Check the server log!
+			<b>{{ profile.name }}</b>
+			{{ profile.form.profile }}
+			<button type="submit" class="btn btn-outline-primary">Switch To</button>
 		</p>
-		{% endfor %}
-	</body>
-</html>
+	</form>
+	{% empty %}
+	<p>
+		No profiles available :( <br>This is probably an error. Check the server log!
+	</p>
+	{% endfor %}
+
+</div>
+
+{% endblock content %}
