@@ -26,7 +26,7 @@
 		</fieldset>
 
 		<fieldset class="form-group">
-			{{ control_form.power.errors }}
+			{{ control_form.brightness.errors }}
 			<legend>{{ control_form.brightness.label }}</legend>
 			<div class="form-row align-items-center">
 				<div class="col-9">
@@ -43,6 +43,7 @@
 		</fieldset>
 
 		<button type="submit" class="btn btn-primary">Update Strip</button>
+		<button type="submit" class="btn btn-danger" name="reset" value="true">Reset</button>
 	</form>
 
 	<hr>
@@ -50,11 +51,14 @@
 	<h2>Profile Select</h2>
 	{% for profile in strip_profiles %}
 	<form action="{% url 'main:set-profile' %}" method="POST">
-		<p>
-			<b>{{ profile.name }}</b>
+		<div class="d-flex flex-row align-items-center mb-2">
+			<span class="p-1"><b>{{ profile.name }}</b></span>
+			{% if profile.name == light_strip.current_profile %}
+			<span class="p-1 text-success"><i>Current profile</i></span>
+			{% endif %}
 			{{ profile.form.profile }}
-			<button type="submit" class="btn btn-outline-primary">Switch To</button>
-		</p>
+			<button type="submit" class="ml-auto btn btn-outline-primary">Switch To</button>
+		</div>
 	</form>
 	{% empty %}
 	<p>

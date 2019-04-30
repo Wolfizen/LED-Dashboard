@@ -4,6 +4,8 @@ import os
 
 from django.conf import settings
 
+from main.models import LightStrip
+
 log = logging.getLogger(__name__)
 
 
@@ -36,6 +38,8 @@ def find_profiles():
 
 
 def lookup_profile(name):
+	if not name:
+		raise ValueError("Empty profile name")
 	profile = Profile(name)
 	profile.validate()
 	return profile
@@ -53,3 +57,13 @@ def switch_to_profile(profile):
 	# TODO: switch to DBUS
 	profile.validate()
 	os.system('/home/rgb_user/.local/bin/lightctl load-conf {}'.format(profile.path))
+
+
+def apply_model_settings(light_strip: LightStrip):
+	"""Read the fields from a LightStrip object and apply them to the light strip"""
+	set_brightness(light_strip.brightness if light_strip.power else 0)
+	try:
+		switch_to_profile(lookup_profile(light_strip.current_profile))
+	except ValueError as ex:
+		log.warning("Unable to switch profiles: {}".format(str(ex)))
+		return

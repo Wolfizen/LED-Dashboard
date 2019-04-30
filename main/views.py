@@ -7,6 +7,7 @@ from django.views.generic import TemplateView
 
 from main import rgbd
 from main.forms import StripControlForm, ProfileSelectForm
+from main.models import LightStrip
 
 log = logging.getLogger(__name__)
 
@@ -17,12 +18,15 @@ class RootPageView(TemplateView):
 	def get_context_data(self, **kwargs):
 		context = super(RootPageView, self).get_context_data(**kwargs)
 
-		control_form = StripControlForm()
+		light_strip = LightStrip.primary_strip()
+		context['light_strip'] = light_strip
+
+		control_form = StripControlForm(power=light_strip.power, brightness=light_strip.brightness)
 		context['control_form'] = control_form
 
 		strip_profiles = rgbd.find_profiles()
 		for profile in strip_profiles:
-			profile.form = ProfileSelectForm(profile.name)
+			profile.form = ProfileSelectForm(profile_name=profile.name)
 		context['strip_profiles'] = strip_profiles
 
 		return context
@@ -31,13 +35,20 @@ class RootPageView(TemplateView):
 class StripControlFormSubmit(View):
 
 	def post(self, request):
-		form = StripControlForm(request.POST)
+		print("Strip control submit: {}".format(request.POST))
+		form = StripControlForm(data=request.POST)
 		if form.is_valid():
-			brightness = form.cleaned_data['brightness']
-			if not form.cleaned_data['power']:
-				brightness = 0
-			rgbd.set_brightness(brightness)
-			print("Strip control submit: {}".format(request.POST))
+			light_strip = LightStrip.primary_strip()
+			if form.cleaned_data['reset']:
+				default_strip = LightStrip()
+				light_strip.power = default_strip.power
+				light_strip.brightness = default_strip.brightness
+			else:
+				light_strip.power = form.cleaned_data['power']
+				light_strip.brightness = form.cleaned_data['brightness']
+			# Apply the settings before saving, if there is an error the changes won't commit
+			rgbd.apply_model_settings(light_strip)
+			light_strip.save()
 			return HttpResponseRedirect(reverse('main:root'))
 		else:
 			return HttpResponseBadRequest()
@@ -46,11 +57,14 @@ class StripControlFormSubmit(View):
 class ProfileSelectFormSubmit(View):
 
 	def post(self, request):
+		print("Profile select submit: {}".format(request.POST))
 		form = ProfileSelectForm(data=request.POST)
 		if form.is_valid():
-			profile = rgbd.lookup_profile(form.cleaned_data['profile'])
-			rgbd.switch_to_profile(profile)
-			print("Profile select submit: {}".format(request.POST))
+			light_strip = LightStrip.primary_strip()
+			light_strip.current_profile = form.cleaned_data['profile']
+			# Apply the settings before saving, if there is an error the changes won't commit
+			rgbd.apply_model_settings(light_strip)
+			light_strip.save()
 			return HttpResponseRedirect(reverse('main:root'))
 		else:
 			return HttpResponseBadRequest()
