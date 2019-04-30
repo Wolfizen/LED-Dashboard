@@ -32,6 +32,8 @@ class RootPageView(TemplateView):
 		return context
 
 
+# TODO: Combine these into a single endpoint that can handle everything
+
 class StripControlFormSubmit(View):
 
 	def post(self, request):
@@ -47,7 +49,7 @@ class StripControlFormSubmit(View):
 				light_strip.power = form.cleaned_data['power']
 				light_strip.brightness = form.cleaned_data['brightness']
 			# Apply the settings before saving, if there is an error the changes won't commit
-			rgbd.apply_model_settings(light_strip)
+			rgbd.set_brightness(light_strip.brightness if light_strip.power else 0)
 			light_strip.save()
 			return HttpResponseRedirect(reverse('main:root'))
 		else:
@@ -63,8 +65,12 @@ class ProfileSelectFormSubmit(View):
 			light_strip = LightStrip.primary_strip()
 			light_strip.current_profile = form.cleaned_data['profile']
 			# Apply the settings before saving, if there is an error the changes won't commit
-			rgbd.apply_model_settings(light_strip)
-			light_strip.save()
+			try:
+				rgbd.switch_to_profile(rgbd.lookup_profile(light_strip.current_profile))
+				light_strip.save()
+				rgbd.set_brightness(light_strip.brightness if light_strip.power else 0)
+			except ValueError as ex:
+				log.warning("Unable to switch profiles: {}".format(str(ex)))
 			return HttpResponseRedirect(reverse('main:root'))
 		else:
 			return HttpResponseBadRequest()
