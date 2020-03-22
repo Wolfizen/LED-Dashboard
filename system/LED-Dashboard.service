@@ -1,0 +1,10 @@
+[Unit]
+Description=LED Dashboard application to control rgbd
+After=rgbd.service
+
+[Service]
+WorkingDirectory=%h/LED-Dashboard/
+ExecStart=%h/.local/bin/gunicorn --workers 3 --bind unix:/tmp/LED-Dashboard_gunicorn.sock led_dashboard.wsgi:application
+
+[Install]
+WantedBy=default.target
